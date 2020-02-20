@@ -76,10 +76,6 @@ app.get('/weather', async(req, res, next) => {
     }
 });
 
-
-module.exports = {
-    app: app,
-};
 //SO AQUI ESTAS DICIENDO: usa el port que puse en .env or el que sea que tenga disponible (keep port in the 3000+)
 //si ambos estan ocupados, cambia primero el de env. no el de aqui
 const port = process.env.PORT || 5000;
@@ -87,3 +83,7 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log('listening on port', port);
 });
+
+module.exports = {
+    app: app,
+};
