@@ -4,7 +4,8 @@ const app = express ();
 const request = require('superagent');
 //entonces borras const data porque ya no lo estas usando
 // const data = require('./geo.js');
-const weather = require('./data/darksky.js');
+// same with weather
+// const weather = require('./data/darksky.js');
 const cors = require('cors');
 
 
@@ -13,13 +14,14 @@ app.use(cors());
 let lat;
 let lng;
 
-app.get('/location', async(request, respond, next) => {
+app.get('/location', async(req, res, next) => {
     try {
     //location sera portland 
-        const location = request.query.search;
+        const location = req.query.search;
         const URL = `https://us1.locationiq.com/v1/search.php?key=${process.env.GEOCODE_API_KEY}&q=${location}&format=json`;
-
+//evetrytime we to hit up another api with superagent we want to put request.get()
         const cityData = await request.get(URL);
+        console.log(cityData);
 // makig sure that the get route was working. as i have api, le cambio el valor 
 //antes 
     // const cityData = data.results[0];
@@ -39,17 +41,20 @@ app.get('/location', async(request, respond, next) => {
     //     latitude:cityData.geometry.location.lat,
     //     longitude:cityData.geometry.location.lng,
 //despues 
-        respond.json({
+        res.json({
             formatted_query: firstResult.display_name,
             latitude: lat,
             longitude: lng,
         });
+        //
     } catch (error) {
         next (error);
     }
 });
 
-const getWeatherData = (lat, lng) => {
+const getWeatherData = async(lat, lng) => {
+    const weather = await request.get(`https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${lng}`);
+
     return weather.daily.data.map(forecast => {
         return {
             forecast:forecast.summary,
@@ -58,18 +63,23 @@ const getWeatherData = (lat, lng) => {
     });
 };
 
-app.get('/weather', (request, respond) => {
-    const portlandWeather = getWeatherData(lat, lng);
+app.get('/weather', async(req, res, next) => {
+    try {
+        const portlandWeather = await getWeatherData(lat, lng);
     
-    respond.json(portlandWeather);
+        res.json(portlandWeather);
+    } catch (error){
+        next(error);
+    }
 });
+
 
 module.exports = {
     app: app,
 };
 //SO AQUI ESTAS DICIENDO: usa el port que puse en .env or el que sea que tenga disponible (keep port in the 3000+)
 //si ambos estan ocupados, cambia primero el de env. no el de aqui
-const port = process.env.PORT || 5002;
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
     console.log('listening on port', port);
