@@ -53,9 +53,10 @@ app.get('/location', async(req, res, next) => {
 });
 
 const getWeatherData = async(lat, lng) => {
+    console.log(lat, lng);
+    console.log(process.env.WEATHER_API_KEY)
     const weather = await request.get(`https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${lng}`);
-
-    return weather.daily.data.map(forecast => {
+    return weather.body.daily.data.map(forecast => {
         return {
             forecast:forecast.summary,
             time:new Date(forecast.time * 1000),
