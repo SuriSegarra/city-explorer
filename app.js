@@ -127,6 +127,36 @@ app.get('/yelp', async(req, res, next) => {
     }
 });
 
+const getTrailsData = async(lat, lng) => {
+
+    const trail = await request.get(`https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lng}&key=${process.env.TRAIL_API_KEY}`);
+
+    return trail.body.trails.map(trails => {
+        return {
+            name: trails.name,
+            location: trails.location,
+            rating: trails.stars,
+            ratingVotes: trails.starVotes,
+            distance: trails.length,
+            description: trails.summary,
+            conditionStatus: trails.conditionStatus,
+            conditionDetails: trails.conditionDetails,
+            conditionDate: trails.conditionDetails
+
+        };
+    }); 
+};
+
+app.get('/trail', async(req, res, next) => {
+    try {
+        const placesTrails = await getTrailsData(lat, lng);
+        res.json(placesTrails);
+    } catch (error) {
+        next (error);
+    }
+});
+
+
 
 //SO AQUI ESTAS DICIENDO: usa el port que puse en .env or el que sea que tenga disponible (keep port in the 3000+)
 //si ambos estan ocupados, cambia primero el de env. no el de aqui
