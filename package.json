@@ -3,17 +3,15 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "test"
-  },
-  "scripts": {
     "test": "jest --detectOpenHandles",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jest": "^25.1.0",
     "supertest": "^4.0.2"
